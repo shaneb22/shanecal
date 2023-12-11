@@ -199,27 +199,52 @@
     </div>
 
     <script>
-        // Existing JavaScript functions...
+        function calculateTotal() {
+            var policyAmount = parseInt(document.getElementById('policyAmount').value, 10);
+            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
+            
+            var totalCost = policyAmount * monthsInArrears;
+            var totalCostPerMonth = policyAmount;
+
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+            document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
+        }
 
         function addToTableManually() {
-            // Retrieve entered values
             var policyNumber = document.getElementById('policyNumber').value;
             var policyAmount = parseInt(document.getElementById('policyAmount').value, 10);
             var monthsInArrears = parseInt(document.getElementById('months').value, 10);
 
-            // Calculate totals
             var totalCost = policyAmount * monthsInArrears;
             var totalCostPerMonth = policyAmount;
 
-            // Update totals in the UI
             document.getElementById('totalCost').textContent = totalCost.toFixed(2);
             document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
 
-            // Add data to the table
             addToTable(policyNumber, policyAmount, monthsInArrears, totalCost, totalCostPerMonth);
         }
 
-        // Existing functions...
+        function addToTable(policyNumber, policyAmount, monthsInArrears, totalCost, totalCostPerMonth) {
+            var tableBody = document.querySelector('#data-table tbody');
+            var newRow = tableBody.insertRow();
+
+            newRow.insertCell().textContent = policyNumber;
+            newRow.insertCell().textContent = policyAmount.toFixed(2);
+            newRow.insertCell().textContent = monthsInArrears;
+            newRow.insertCell().textContent = totalCost.toFixed(2);
+            newRow.insertCell().textContent = totalCostPerMonth.toFixed(2);
+        }
+
+        function clearSelection() {
+            document.getElementById('policyNumber').value = '';
+            document.getElementById('policyAmount').value = 0;
+            document.getElementById('months').value = 1;
+            document.getElementById('totalCost').textContent = '0';
+            document.getElementById('totalCostPerMonth').textContent = '0';
+
+            var tableBody = document.querySelector('#data-table tbody');
+            tableBody.innerHTML = '';
+        }
     </script>
 </body>
 </html>
