@@ -21,14 +21,14 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 800px; /* Adjusted width */
+            width: 700px; /* Adjusted width */
             text-align: center;
             position: relative;
         }
 
         .logo {
             width: 80%;
-            max-width: 200px;
+            max-width: 300px;
             height: auto;
             margin-bottom: 20px;
         }
@@ -99,15 +99,6 @@
             cursor: pointer;
             font-size: 1.2em;
             transition: background-color 0.3s ease;
-        }
-
-        #clearSelection {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        #clearSelection:hover {
-            background-color: #c0392b;
         }
 
         #addToTableButton {
@@ -201,7 +192,6 @@
         </div>
 
         <!-- Buttons -->
-        <button id="clearSelection" class="button" onclick="clearSelection()">Clear Selection</button>
         <button id="addToTableButton" class="button" onclick="addToTableManually()">Add to Table</button>
 
         <!-- Table -->
@@ -228,7 +218,7 @@
         </table>
 
         <!-- Copy Table Button -->
-        <button id="copyTableButton" class="button" onclick="copyTable()">Copy Table</button>
+        <button id="copyTableButton" class="button">Copy Table</button>
     </div>
 
     <script>
@@ -304,34 +294,9 @@
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
         }
 
-        function clearSelection() {
-            document.getElementById('policyNumber').value = '';
-            document.getElementById('policyAmount').value = 0;
-            document.getElementById('months').value = 1;
-            document.getElementById('totalCost').textContent = '0';
-
-            var tableBody = document.querySelector('#data-table tbody');
-            tableBody.innerHTML = '';
-
-            // Reset totals
-            document.getElementById('totalAmount').textContent = '0';
-            document.getElementById('totalMonths').textContent = '0';
-            document.getElementById('grandTotal').textContent = '0';
-        }
-
         function removeRow(row) {
             var tableBody = document.querySelector('#data-table tbody');
             tableBody.removeChild(row);
-        }
-
-        function copyTable() {
-            var table = document.getElementById('data-table');
-            var range = document.createRange();
-            range.selectNode(table);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            document.execCommand('copy');
-            window.getSelection().removeAllRanges();
         }
     </script>
 </body>
