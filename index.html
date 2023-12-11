@@ -92,6 +92,22 @@
             text-align: right;
             margin-bottom: .00005px; /* Added margin for spacing */
         }
+
+        /* Style for Clear Selection button */
+        #clearSelection {
+            margin-top: 15px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #clearSelection:hover {
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
@@ -132,6 +148,9 @@
                 document.write(date + " " + time);
             </script>
         </div>
+
+        <!-- Clear Selection button -->
+        <button id="clearSelection" onclick="clearSelection()">Clear Selection</button>
     </div>
 
     <script>
@@ -151,6 +170,18 @@
 
             document.getElementById('totalCost').textContent = totalCost.toFixed(2);
             document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
+        }
+
+        function clearSelection() {
+            var selectedProductsCheckbox = document.getElementsByName('selectedProductCheckbox');
+
+            for (var j = 0; j < selectedProductsCheckbox.length; j++) {
+                selectedProductsCheckbox[j].checked = false;
+            }
+
+            document.getElementById('months').value = 1;
+            document.getElementById('totalCost').textContent = '0';
+            document.getElementById('totalCostPerMonth').textContent = '0';
         }
     </script>
 </body>
