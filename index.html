@@ -21,11 +21,8 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 300px;
+            width: 400px;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             position: relative;
         }
 
@@ -46,7 +43,7 @@
             margin-top: 15px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             width: 80%;
         }
 
@@ -54,11 +51,12 @@
             color: #555;
             margin-bottom: 5px;
             font-size: 1em;
+            align-self: flex-start;
         }
 
         input[type="text"],
         input[type="number"] {
-            width: 100%;
+            width: calc(100% - 20px);
             padding: 10px;
             box-sizing: border-box;
             margin-bottom: 12px;
@@ -71,6 +69,9 @@
         #totals {
             margin-top: 20px;
             width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h2, h3 {
@@ -87,23 +88,53 @@
             font-size: 0.8em;
             color: #555;
             text-align: left;
-            margin-bottom: .00005px;
         }
 
-        /* Style for Clear Selection button */
-        #clearSelection {
+        /* Style for Clear Selection and Add to Table buttons */
+        .button {
             margin-top: 20px;
-            background-color: #e74c3c;
-            color: white;
             padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 1.2em;
+            transition: background-color 0.3s ease;
+        }
+
+        #clearSelection {
+            background-color: #e74c3c;
+            color: white;
         }
 
         #clearSelection:hover {
             background-color: #c0392b;
+        }
+
+        #addToTableButton {
+            background-color: #3498db;
+            color: white;
+        }
+
+        #addToTableButton:hover {
+            background-color: #2980b9;
+        }
+
+        /* Style for the table */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
         }
     </style>
 </head>
@@ -147,29 +178,48 @@
         </div>
 
         <!-- Clear Selection Button -->
-        <button id="clearSelection" onclick="clearSelection()">Clear Selection</button>
+        <button id="clearSelection" class="button" onclick="clearSelection()">Clear Selection</button>
+
+        <!-- Add to Table Button -->
+        <button id="addToTableButton" class="button" onclick="addToTableManually()">Add to Table</button>
+
+        <!-- Table to display entered data and totals -->
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Policy Number</th>
+                    <th>Policy Amount (R)</th>
+                    <th>Months in Arrears</th>
+                    <th>Total Cost (R)</th>
+                    <th>Total Cost per Month (R)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 
     <script>
-        function calculateTotal() {
+        // Existing JavaScript functions...
+
+        function addToTableManually() {
+            // Retrieve entered values
+            var policyNumber = document.getElementById('policyNumber').value;
             var policyAmount = parseInt(document.getElementById('policyAmount').value, 10);
             var monthsInArrears = parseInt(document.getElementById('months').value, 10);
-            
+
+            // Calculate totals
             var totalCost = policyAmount * monthsInArrears;
             var totalCostPerMonth = policyAmount;
 
+            // Update totals in the UI
             document.getElementById('totalCost').textContent = totalCost.toFixed(2);
             document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
+
+            // Add data to the table
+            addToTable(policyNumber, policyAmount, monthsInArrears, totalCost, totalCostPerMonth);
         }
 
-        function clearSelection() {
-            document.getElementById('policyNumber').value = '';
-            document.getElementById('policyAmount').value = 0;
-            document.getElementById('months').value = 1;
-            document.getElementById('totalCost').textContent = '0';
-            document.getElementById('totalCostPerMonth').textContent = '0';
-        }
+        // Existing functions...
     </script>
 </body>
 </html>
-
