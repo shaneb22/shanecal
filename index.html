@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policy Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        #calculatorForm {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .logo {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .checkbox-options {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-options label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .form-section {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #totals {
+            margin-top: 15px;
+        }
+
+        h2, h3 {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        /* Position date and time on the left */
+        #dateTime {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #777;
+            text-align: right;
+            margin-bottom: .00005px; /* Added margin for spacing */
+        }
+    </style>
+</head>
+<body>
+    <div id="calculatorForm">
+        <img src="https://xplorio.com/xplorio/categories/28627/OM_Logo_Horizonal_Reverse_on_Vignette_RGB_1583910489.jpg?width=960&height=440" alt="Logo" class="logo">
+        <h1>Policy Calculator</h1>
+
+        <!-- Add products here -->
+        <div class="checkbox-options">
+            <label>
+                <input type="checkbox" name="selectedProductCheckbox" value="10" oninput="calculateTotal()"> Product 1 - R10
+            </label>
+            <label>
+                <input type="checkbox" name="selectedProductCheckbox" value="10" oninput="calculateTotal()"> Product 2 - R10
+            </label>
+            <label>
+                <input type="checkbox" name="selectedProductCheckbox" value="30" oninput="calculateTotal()"> Product 3 - R30
+            </label>
+            <!-- Add more products in the same format -->
+        </div>
+
+        <div class="form-section">
+            <label for="months">Months:</label>
+            <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()">
+        </div>
+
+        <div id="totals">
+            <h2>Total Cost: R<span id="totalCost">0</span></h2>
+            <h3>Total Cost per Month: R<span id="totalCostPerMonth">0</span></h3>
+        </div>
+
+        <!-- Display date and time on the left -->
+        <div id="dateTime">
+            <script>
+                var now = new Date();
+                var date = now.toLocaleDateString();
+                var time = now.toLocaleTimeString();
+                document.write(date + " " + time);
+            </script>
+        </div>
+    </div>
+
+    <script>
+        function calculateTotal() {
+            var selectedProductsCheckbox = document.getElementsByName('selectedProductCheckbox');
+            var productsTotalCheckbox = 0;
+
+            for (var j = 0; j < selectedProductsCheckbox.length; j++) {
+                if (selectedProductsCheckbox[j].checked) {
+                    productsTotalCheckbox += parseInt(selectedProductsCheckbox[j].value, 10);
+                }
+            }
+
+            var selectedMonths = parseInt(document.getElementById('months').value, 10);
+            var totalCost = productsTotalCheckbox * selectedMonths;
+            var totalCostPerMonth = productsTotalCheckbox;
+
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+            document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
+        }
+    </script>
+</body>
+</html>
