@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Policy Calculator App</title>
+    <title>Policy Calculator</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -21,7 +21,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 400px;
+            width: 800px; /* Adjusted width */
             text-align: center;
             position: relative;
         }
@@ -90,7 +90,7 @@
             text-align: left;
         }
 
-        /* Style for Clear Selection and Add to Table buttons */
+        /* Style for buttons */
         .button {
             margin-top: 20px;
             padding: 12px 20px;
@@ -119,6 +119,15 @@
             background-color: #2980b9;
         }
 
+        #copyTableButton {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        #copyTableButton:hover {
+            background-color: #27ae60;
+        }
+
         /* Style for the table */
         table {
             width: 100%;
@@ -127,7 +136,7 @@
         }
 
         th, td {
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
             text-align: left;
         }
@@ -135,11 +144,6 @@
         th {
             background-color: #3498db;
             color: white;
-        }
-
-        /* Style for the totals row */
-        #totalsRow {
-            font-weight: bold;
         }
 
         /* Style for the remove button */
@@ -196,13 +200,11 @@
             </script>
         </div>
 
-        <!-- Clear Selection Button -->
+        <!-- Buttons -->
         <button id="clearSelection" class="button" onclick="clearSelection()">Clear Selection</button>
-
-        <!-- Add to Table Button -->
         <button id="addToTableButton" class="button" onclick="addToTableManually()">Add to Table</button>
 
-        <!-- Table to display entered data and totals -->
+        <!-- Table -->
         <table id="data-table">
             <thead>
                 <tr>
@@ -224,6 +226,9 @@
                 </tr>
             </tfoot>
         </table>
+
+        <!-- Copy Table Button -->
+        <button id="copyTableButton" class="button" onclick="copyTable()">Copy Table</button>
     </div>
 
     <script>
@@ -317,6 +322,16 @@
         function removeRow(row) {
             var tableBody = document.querySelector('#data-table tbody');
             tableBody.removeChild(row);
+        }
+
+        function copyTable() {
+            var table = document.getElementById('data-table');
+            var range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
         }
     </script>
 </body>
