@@ -141,6 +141,21 @@
         #totalsRow {
             font-weight: bold;
         }
+
+        /* Style for the remove button */
+        .removeButton {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .removeButton:hover {
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
@@ -169,7 +184,6 @@
         <!-- Total Cost Display -->
         <div id="totals">
             <h2>Total Cost: R<span id="totalCost">0</span></h2>
-            <h3>Total Cost per Month: R<span id="totalCostPerMonth">0</span></h3>
         </div>
 
         <!-- Date and Time Display -->
@@ -196,7 +210,7 @@
                     <th>Policy Amount (R)</th>
                     <th>Months in Arrears</th>
                     <th>Total Cost (R)</th>
-                    <th>Total Cost per Month (R)</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -206,7 +220,7 @@
                     <td id="totalAmount">0</td>
                     <td id="totalMonths">0</td>
                     <td id="grandTotal">0</td>
-                    <td id="averagePerMonth">0</td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>
@@ -218,10 +232,8 @@
             var monthsInArrears = parseInt(document.getElementById('months').value, 10);
             
             var totalCost = policyAmount * monthsInArrears;
-            var totalCostPerMonth = policyAmount;
 
             document.getElementById('totalCost').textContent = totalCost.toFixed(2);
-            document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
         }
 
         function addToTableManually() {
@@ -230,18 +242,16 @@
             var monthsInArrears = parseInt(document.getElementById('months').value, 10);
 
             var totalCost = policyAmount * monthsInArrears;
-            var totalCostPerMonth = policyAmount;
 
             document.getElementById('totalCost').textContent = totalCost.toFixed(2);
-            document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
 
-            addToTable(policyNumber, policyAmount, monthsInArrears, totalCost, totalCostPerMonth);
+            addToTable(policyNumber, policyAmount, monthsInArrears, totalCost);
 
             // Update totals row
             updateTotals();
         }
 
-        function addToTable(policyNumber, policyAmount, monthsInArrears, totalCost, totalCostPerMonth) {
+        function addToTable(policyNumber, policyAmount, monthsInArrears, totalCost) {
             var tableBody = document.querySelector('#data-table tbody');
             var newRow = tableBody.insertRow();
 
@@ -249,7 +259,16 @@
             newRow.insertCell().textContent = policyAmount.toFixed(2);
             newRow.insertCell().textContent = monthsInArrears;
             newRow.insertCell().textContent = totalCost.toFixed(2);
-            newRow.insertCell().textContent = totalCostPerMonth.toFixed(2);
+
+            var removeCell = newRow.insertCell();
+            var removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.className = 'removeButton';
+            removeButton.onclick = function () {
+                removeRow(newRow);
+                updateTotals();
+            };
+            removeCell.appendChild(removeButton);
         }
 
         function updateTotals() {
@@ -260,7 +279,6 @@
             var totalAmount = 0;
             var totalMonths = 0;
             var grandTotal = 0;
-            var averagePerMonth = 0;
 
             // Loop through rows in the table body
             for (var i = 0; i < tableBody.rows.length; i++) {
@@ -275,14 +293,10 @@
                 grandTotal += total;
             }
 
-            // Calculate average per month
-            averagePerMonth = grandTotal / totalMonths;
-
             // Update totals in the totals row
             document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
             document.getElementById('totalMonths').textContent = totalMonths;
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
-            document.getElementById('averagePerMonth').textContent = averagePerMonth.toFixed(2);
         }
 
         function clearSelection() {
@@ -290,7 +304,6 @@
             document.getElementById('policyAmount').value = 0;
             document.getElementById('months').value = 1;
             document.getElementById('totalCost').textContent = '0';
-            document.getElementById('totalCostPerMonth').textContent = '0';
 
             var tableBody = document.querySelector('#data-table tbody');
             tableBody.innerHTML = '';
@@ -299,7 +312,11 @@
             document.getElementById('totalAmount').textContent = '0';
             document.getElementById('totalMonths').textContent = '0';
             document.getElementById('grandTotal').textContent = '0';
-            document.getElementById('averagePerMonth').textContent = '0';
+        }
+
+        function removeRow(row) {
+            var tableBody = document.querySelector('#data-table tbody');
+            tableBody.removeChild(row);
         }
     </script>
 </body>
