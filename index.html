@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Policy Calculator</title>
+    <title>Policy Calculator App</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -21,14 +21,14 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 700px; /* Adjusted width */
+            width: 600px; /* Adjusted width */
             text-align: center;
             position: relative;
         }
 
         .logo {
             width: 80%;
-            max-width: 300px;
+            max-width: 200px;
             height: auto;
             margin-bottom: 20px;
         }
@@ -55,7 +55,8 @@
         }
 
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        input[type="date"] {
             width: calc(100% - 20px);
             padding: 10px;
             box-sizing: border-box;
@@ -99,15 +100,6 @@
             cursor: pointer;
             font-size: 1.2em;
             transition: background-color 0.3s ease;
-        }
-
-        #addToTableButton {
-            background-color: #3498db;
-            color: white;
-        }
-
-        #addToTableButton:hover {
-            background-color: #2980b9;
         }
 
         #copyTableButton {
@@ -161,19 +153,25 @@
         <!-- Policy Number Field -->
         <div class="form-section">
             <label for="policyNumber">Policy Number:</label>
-            <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number">
+            <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number" onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+        </div>
+
+        <!-- Payment Date Field -->
+        <div class="form-section">
+            <label for="paymentDate">Payment Date:</label>
+            <input type="date" id="paymentDate" name="paymentDate" onkeydown="if (event.key === 'Enter') addToTableFromInput()">
         </div>
 
         <!-- Policy Amount Field -->
         <div class="form-section">
             <label for="policyAmount">Policy Amount (R):</label>
-            <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()">
+            <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()" onkeydown="if (event.key === 'Enter') addToTableFromInput()">
         </div>
 
         <!-- Months in Arrears Field -->
         <div class="form-section">
             <label for="months">Months in Arrears:</label>
-            <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()">
+            <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()" onkeydown="if (event.key === 'Enter') addToTableFromInput()">
         </div>
 
         <!-- Total Cost Display -->
@@ -191,14 +189,12 @@
             </script>
         </div>
 
-        <!-- Buttons -->
-        <button id="addToTableButton" class="button" onclick="addToTableManually()">Add to Table</button>
-
         <!-- Table -->
         <table id="data-table">
             <thead>
                 <tr>
                     <th>Policy Number</th>
+                    <th>Payment Date</th>
                     <th>Policy Amount (R)</th>
                     <th>Months in Arrears</th>
                     <th>Total Cost (R)</th>
@@ -209,6 +205,7 @@
             <tfoot>
                 <tr id="totalsRow">
                     <td>Total</td>
+                    <td></td>
                     <td id="totalAmount">0</td>
                     <td id="totalMonths">0</td>
                     <td id="grandTotal">0</td>
@@ -218,7 +215,7 @@
         </table>
 
         <!-- Copy Table Button -->
-        <button id="copyTableButton" class="button">Copy Table</button>
+        <button id="copyTableButton" class="button" onclick="copyTable()">Copy Table</button>
     </div>
 
     <script>
@@ -231,26 +228,12 @@
             document.getElementById('totalCost').textContent = totalCost.toFixed(2);
         }
 
-        function addToTableManually() {
-            var policyNumber = document.getElementById('policyNumber').value;
-            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
-            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
-
-            var totalCost = policyAmount * monthsInArrears;
-
-            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
-
-            addToTable(policyNumber, policyAmount, monthsInArrears, totalCost);
-
-            // Update totals row
-            updateTotals();
-        }
-
-        function addToTable(policyNumber, policyAmount, monthsInArrears, totalCost) {
+        function addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost) {
             var tableBody = document.querySelector('#data-table tbody');
             var newRow = tableBody.insertRow();
 
             newRow.insertCell().textContent = policyNumber;
+            newRow.insertCell().textContent = paymentDate;
             newRow.insertCell().textContent = policyAmount.toFixed(2);
             newRow.insertCell().textContent = monthsInArrears;
             newRow.insertCell().textContent = totalCost.toFixed(2);
@@ -264,6 +247,9 @@
                 updateTotals();
             };
             removeCell.appendChild(removeButton);
+
+            // Update totals row
+            updateTotals();
         }
 
         function updateTotals() {
@@ -278,9 +264,9 @@
             // Loop through rows in the table body
             for (var i = 0; i < tableBody.rows.length; i++) {
                 var row = tableBody.rows[i];
-                var amount = parseFloat(row.cells[1].textContent);
-                var months = parseInt(row.cells[2].textContent, 10);
-                var total = parseFloat(row.cells[3].textContent);
+                var amount = parseFloat(row.cells[2].textContent);
+                var months = parseInt(row.cells[3].textContent, 10);
+                var total = parseFloat(row.cells[4].textContent);
 
                 // Accumulate totals
                 totalAmount += amount;
@@ -297,6 +283,28 @@
         function removeRow(row) {
             var tableBody = document.querySelector('#data-table tbody');
             tableBody.removeChild(row);
+        }
+
+        function copyTable() {
+            var table = document.getElementById('data-table');
+            var range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+        }
+
+        function addToTableFromInput() {
+            var policyNumber = document.getElementById('policyNumber').value;
+            var paymentDate = document.getElementById('paymentDate').value;
+            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
+            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
+
+            if (!isNaN(policyAmount) && !isNaN(monthsInArrears)) {
+                var totalCost = policyAmount * monthsInArrears;
+                addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost);
+            }
         }
     </script>
 </body>
