@@ -136,6 +136,11 @@
             background-color: #3498db;
             color: white;
         }
+
+        /* Style for the totals row */
+        #totalsRow {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -195,6 +200,15 @@
                 </tr>
             </thead>
             <tbody></tbody>
+            <tfoot>
+                <tr id="totalsRow">
+                    <td>Total</td>
+                    <td id="totalAmount">0</td>
+                    <td id="totalMonths">0</td>
+                    <td id="grandTotal">0</td>
+                    <td id="averagePerMonth">0</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 
@@ -222,6 +236,9 @@
             document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
 
             addToTable(policyNumber, policyAmount, monthsInArrears, totalCost, totalCostPerMonth);
+
+            // Update totals row
+            updateTotals();
         }
 
         function addToTable(policyNumber, policyAmount, monthsInArrears, totalCost, totalCostPerMonth) {
@@ -235,16 +252,37 @@
             newRow.insertCell().textContent = totalCostPerMonth.toFixed(2);
         }
 
-        function clearSelection() {
-            document.getElementById('policyNumber').value = '';
-            document.getElementById('policyAmount').value = 0;
-            document.getElementById('months').value = 1;
-            document.getElementById('totalCost').textContent = '0';
-            document.getElementById('totalCostPerMonth').textContent = '0';
-
+        function updateTotals() {
             var tableBody = document.querySelector('#data-table tbody');
-            tableBody.innerHTML = '';
+            var totalsRow = document.getElementById('totalsRow');
+
+            // Initialize totals
+            var totalAmount = 0;
+            var totalMonths = 0;
+            var grandTotal = 0;
+            var averagePerMonth = 0;
+
+            // Loop through rows in the table body
+            for (var i = 0; i < tableBody.rows.length; i++) {
+                var row = tableBody.rows[i];
+                var amount = parseFloat(row.cells[1].textContent);
+                var months = parseInt(row.cells[2].textContent, 10);
+                var total = parseFloat(row.cells[3].textContent);
+
+                // Accumulate totals
+                totalAmount += amount;
+                totalMonths += months;
+                grandTotal += total;
+            }
+
+            // Calculate average per month
+            averagePerMonth = grandTotal / totalMonths;
+
+            // Update totals in the totals row
+            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+            document.getElementById('totalMonths').textContent = totalMonths;
+            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+            document.getElementById('averagePerMonth').textContent = averagePerMonth.toFixed(2);
         }
-    </script>
-</body>
-</html>
+
+        function clearSelection
