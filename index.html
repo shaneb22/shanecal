@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Policy Calculator</title>
+    <title>Policy Calculator App</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -13,10 +13,10 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #ecf0f1;
         }
 
-        #calculatorForm {
+        #calculatorApp {
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -30,79 +30,76 @@
         }
 
         .logo {
-            width: 100%;
+            width: 80%;
+            max-width: 200px;
             height: auto;
             margin-bottom: 20px;
         }
 
         h1 {
-            color: #333;
+            color: #3498db;
             margin-bottom: 10px;
-            font-size: 1.5em;
-        }
-
-        .checkbox-options {
-            text-align: left;
-            margin-bottom: 15px;
-        }
-
-        .checkbox-options label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 8px;
+            font-size: 1.8em;
         }
 
         .form-section {
             margin-top: 15px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
+            width: 80%;
         }
 
+        label {
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        input[type="text"],
         input[type="number"] {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
             margin-bottom: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid #3498db;
             border-radius: 4px;
+            font-size: 1em;
+            color: #555;
         }
 
         #totals {
-            margin-top: 15px;
+            margin-top: 20px;
+            width: 80%;
         }
 
         h2, h3 {
             color: #555;
             margin-bottom: 10px;
-            font-size: 1em;
+            font-size: 1.2em;
         }
 
         /* Position date and time on the left */
         #dateTime {
             position: absolute;
             bottom: 5px;
-            right: 10px;
+            left: 10px;
             font-size: 0.8em;
-            color: #777;
-            text-align: right;
-            margin-bottom: .00005px; /* Added margin for spacing */
+            color: #555;
+            text-align: left;
+            margin-bottom: .00005px;
         }
 
         /* Style for Clear Selection button */
         #clearSelection {
-            margin-top: 15px;
+            margin-top: 20px;
             background-color: #e74c3c;
             color: white;
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1.2em;
         }
 
         #clearSelection:hover {
@@ -111,35 +108,35 @@
     </style>
 </head>
 <body>
-    <div id="calculatorForm">
+    <div id="calculatorApp">
         <img src="https://xplorio.com/xplorio/categories/28627/OM_Logo_Horizonal_Reverse_on_Vignette_RGB_1583910489.jpg?width=960&height=440" alt="Logo" class="logo">
-        <h1>Policy Calculator</h1>
+        <h1>Policy Calculator App</h1>
 
-        <!-- Add products here -->
-        <div class="checkbox-options">
-            <label>
-                <input type="checkbox" name="selectedProductCheckbox" value="10" oninput="calculateTotal()"> Product 1 - R10
-            </label>
-            <label>
-                <input type="checkbox" name="selectedProductCheckbox" value="10" oninput="calculateTotal()"> Product 2 - R10
-            </label>
-            <label>
-                <input type="checkbox" name="selectedProductCheckbox" value="30" oninput="calculateTotal()"> Product 3 - R30
-            </label>
-            <!-- Add more products in the same format -->
+        <!-- Policy Number Field -->
+        <div class="form-section">
+            <label for="policyNumber">Policy Number:</label>
+            <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number">
         </div>
 
+        <!-- Policy Amount Field -->
         <div class="form-section">
-            <label for="months">Months:</label>
+            <label for="policyAmount">Policy Amount (R):</label>
+            <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()">
+        </div>
+
+        <!-- Months in Arrears Field -->
+        <div class="form-section">
+            <label for="months">Months in Arrears:</label>
             <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()">
         </div>
 
+        <!-- Total Cost Display -->
         <div id="totals">
             <h2>Total Cost: R<span id="totalCost">0</span></h2>
             <h3>Total Cost per Month: R<span id="totalCostPerMonth">0</span></h3>
         </div>
 
-        <!-- Display date and time on the left -->
+        <!-- Date and Time Display -->
         <div id="dateTime">
             <script>
                 var now = new Date();
@@ -149,36 +146,25 @@
             </script>
         </div>
 
-        <!-- Clear Selection button -->
+        <!-- Clear Selection Button -->
         <button id="clearSelection" onclick="clearSelection()">Clear Selection</button>
     </div>
 
     <script>
         function calculateTotal() {
-            var selectedProductsCheckbox = document.getElementsByName('selectedProductCheckbox');
-            var productsTotalCheckbox = 0;
-
-            for (var j = 0; j < selectedProductsCheckbox.length; j++) {
-                if (selectedProductsCheckbox[j].checked) {
-                    productsTotalCheckbox += parseInt(selectedProductsCheckbox[j].value, 10);
-                }
-            }
-
-            var selectedMonths = parseInt(document.getElementById('months').value, 10);
-            var totalCost = productsTotalCheckbox * selectedMonths;
-            var totalCostPerMonth = productsTotalCheckbox;
+            var policyAmount = parseInt(document.getElementById('policyAmount').value, 10);
+            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
+            
+            var totalCost = policyAmount * monthsInArrears;
+            var totalCostPerMonth = policyAmount;
 
             document.getElementById('totalCost').textContent = totalCost.toFixed(2);
             document.getElementById('totalCostPerMonth').textContent = totalCostPerMonth.toFixed(2);
         }
 
         function clearSelection() {
-            var selectedProductsCheckbox = document.getElementsByName('selectedProductCheckbox');
-
-            for (var j = 0; j < selectedProductsCheckbox.length; j++) {
-                selectedProductsCheckbox[j].checked = false;
-            }
-
+            document.getElementById('policyNumber').value = '';
+            document.getElementById('policyAmount').value = 0;
             document.getElementById('months').value = 1;
             document.getElementById('totalCost').textContent = '0';
             document.getElementById('totalCostPerMonth').textContent = '0';
@@ -186,3 +172,4 @@
     </script>
 </body>
 </html>
+
