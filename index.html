@@ -214,7 +214,7 @@
 
     <script>
         function calculateTotal() {
-            var policyAmount = parseInt(document.getElementById('policyAmount').value, 10);
+            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
             var monthsInArrears = parseInt(document.getElementById('months').value, 10);
             
             var totalCost = policyAmount * monthsInArrears;
@@ -226,7 +226,7 @@
 
         function addToTableManually() {
             var policyNumber = document.getElementById('policyNumber').value;
-            var policyAmount = parseInt(document.getElementById('policyAmount').value, 10);
+            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
             var monthsInArrears = parseInt(document.getElementById('months').value, 10);
 
             var totalCost = policyAmount * monthsInArrears;
@@ -285,4 +285,22 @@
             document.getElementById('averagePerMonth').textContent = averagePerMonth.toFixed(2);
         }
 
-        function clearSelection
+        function clearSelection() {
+            document.getElementById('policyNumber').value = '';
+            document.getElementById('policyAmount').value = 0;
+            document.getElementById('months').value = 1;
+            document.getElementById('totalCost').textContent = '0';
+            document.getElementById('totalCostPerMonth').textContent = '0';
+
+            var tableBody = document.querySelector('#data-table tbody');
+            tableBody.innerHTML = '';
+
+            // Reset totals
+            document.getElementById('totalAmount').textContent = '0';
+            document.getElementById('totalMonths').textContent = '0';
+            document.getElementById('grandTotal').textContent = '0';
+            document.getElementById('averagePerMonth').textContent = '0';
+        }
+    </script>
+</body>
+</html>
