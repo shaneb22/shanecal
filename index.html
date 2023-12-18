@@ -20,10 +20,11 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 85%; /* Set to a percentage for responsiveness */
-            max-width: 500px; /* Set a maximum width */
+            width: 85%;
+            max-width: 500px;
             text-align: left;
             position: relative;
+            margin-bottom: 20px;
         }
 
         .logo {
@@ -46,7 +47,6 @@
 
         .form-section label {
             color: #343F57;
-            font-family: 'proxima-nova', sans-serif;
             margin-bottom: 5px;
             font-size: 1.2em;
             display: block;
@@ -65,23 +65,23 @@
             color: #555;
         }
 
+        button {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 0 auto 15px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
         #addToTableButton,
         #copyTableButton {
             background-color: #42AE96;
             border: none;
-            border-radius: 6px;
             color: #343F57;
-            cursor: pointer;
-            font-family: 'proxima-nova', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            line-height: 33.75px;
-            padding: 14px 20px;
-            display: block;
-            width: 100%;
-            margin: 0 auto 15px;
-            text-align: center;
-            transition: background-color 0.3s ease;
         }
 
         #addToTableButton:hover,
@@ -142,7 +142,7 @@
 </head>
 <body>
 <div id="calculatorApp">
-    <img src="https://software.connexone.co.uk/images/logo-d2.png" alt="Logo" class="logo">
+    <img src="https://i.ibb.co/Vt6bkmt/354bde43-576b-4df4-96e9-e63357995718.jpg" alt="Logo" class="logo">
     <h1>Policy Calculator</h1>
 
     <div class="form-section">
@@ -206,22 +206,13 @@
     function calculateTotal() {
         var policyAmount = parseFloat(document.getElementById('policyAmount').value);
         var monthsInArrears = parseInt(document.getElementById('months').value, 10);
-
         var totalCost = policyAmount * monthsInArrears;
-
         document.getElementById('totalCost').textContent = totalCost.toFixed(2);
     }
 
     function isDuplicatePolicyNumber(policyNumber) {
         var tableBody = document.querySelector('#data-table tbody');
-        for (var i = 0; i < tableBody.rows.length; i++) {
-            var row = tableBody.rows[i];
-            var existingPolicyNumber = row.cells[0].textContent;
-            if (existingPolicyNumber === policyNumber) {
-                return true;
-            }
-        }
-        return false;
+        return Array.from(tableBody.rows).some(row => row.cells[0].textContent === policyNumber);
     }
 
     function showWarning(message) {
@@ -255,11 +246,10 @@
         var totalsRow = document.getElementById('totalsRow');
 
         var totalAmount = 0;
-        totalMonths = 0;
+        var totalMonths = 0;
         var grandTotal = 0;
 
-        for (var i = 0; i < tableBody.rows.length; i++) {
-            var row = tableBody.rows[i];
+        Array.from(tableBody.rows).forEach(row => {
             var amount = parseFloat(row.cells[2].textContent);
             var months = parseInt(row.cells[3].textContent, 10);
             var total = parseFloat(row.cells[4].textContent);
@@ -267,7 +257,7 @@
             totalAmount += amount;
             totalMonths += months;
             grandTotal += total;
-        }
+        });
 
         document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
         document.getElementById('totalMonths').textContent = totalMonths;
