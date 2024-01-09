@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             justify-content: center;
             min-height: 100vh;
             color: #343F57;
+            background-color: #f5f5f5;
         }
 
         #calculatorApp {
@@ -77,6 +79,9 @@
             margin: 20px;
             text-align: center;
             transition: background-color 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         #addToTableButton,
@@ -85,7 +90,9 @@
         #downloadImage {
             background-color: #4297ae;
             border: none;
-            color: #343F57;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
         }
 
         #addToTableButton:hover,
@@ -107,6 +114,8 @@
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
         th, td {
@@ -145,6 +154,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="calculatorApp">
         <img src="https://i.ibb.co/Vt6bkmt/354bde43-576b-4df4-96e9-e63357995718.jpg" alt="Logo" class="logo">
@@ -323,4 +333,5 @@
         }
     </script>
 </body>
+
 </html>
