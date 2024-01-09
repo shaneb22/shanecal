@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
     <style>
         body {
             font-family: 'proxima-nova', sans-serif;
@@ -79,7 +81,8 @@
 
         #addToTableButton,
         #copyTableButton,
-        #copyTableText {
+        #copyTableText,
+        #downloadImage {
             background-color: #4297ae;
             border: none;
             color: #343F57;
@@ -87,7 +90,8 @@
 
         #addToTableButton:hover,
         #copyTableButton:hover,
-        #copyTableText:hover {
+        #copyTableText:hover,
+        #downloadImage:hover {
             background-color: #0ec95c;
         }
 
@@ -148,26 +152,22 @@
 
         <div class="form-section">
             <label for="policyNumber">Policy Number:</label>
-            <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number"
-                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+            <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number">
         </div>
 
         <div class="form-section">
             <label for="paymentDate">Payment Date:</label>
-            <input type="date" id="paymentDate" name="paymentDate"
-                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+            <input type="date" id="paymentDate" name="paymentDate">
         </div>
 
         <div class="form-section">
             <label for="policyAmount">Policy Amount (R):</label>
-            <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()"
-                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+            <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()">
         </div>
 
         <div class="form-section">
             <label for="months">Months in Arrears:</label>
-            <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()"
-                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+            <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()">
         </div>
 
         <button id="addToTableButton" onclick="addToTableFromInput()">Add to Table</button>
@@ -201,7 +201,8 @@
         </table>
 
         <button id="copyTableButton" onclick="copyTable()">Copy Table</button>
-        <button id="copyTableText" onclick="copyTableAsText()">Copy Table as Text</button>
+        <button id="copyTableText" onclick="copyTableAsText()">Copy as Text</button>
+        <button id="downloadImage" onclick="downloadTableAsImage()">Download as Image</button>
     </div>
 
     <script>
@@ -293,6 +294,16 @@
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
+        }
+
+        function downloadTableAsImage() {
+            var table = document.getElementById('data-table');
+            html2canvas(table).then(function (canvas) {
+                var link = document.createElement('a');
+                link.href = canvas.toDataURL();
+                link.download = 'table_image.png';
+                link.click();
+            });
         }
 
         function addToTableFromInput() {
