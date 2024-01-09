@@ -61,32 +61,33 @@
             margin-bottom: 15px;
             border: 1px solid #42AE96;
             border-radius: 6px;
-          
             font-size: 1.2em;
             color: #555;
         }
 
         button {
-            width:90%;
+            width: 90%;
             padding: 15px 20px;
             border-radius: 6px;
             font-size: 18px;
             font-weight: 700;
             cursor: pointer;
-            margin:20px;
+            margin: 20px;
             text-align: center;
             transition: background-color 0.3s ease;
         }
 
         #addToTableButton,
-        #copyTableButton {
+        #copyTableButton,
+        #copyTableText {
             background-color: #4297ae;
             border: none;
             color: #343F57;
         }
 
         #addToTableButton:hover,
-        #copyTableButton:hover {
+        #copyTableButton:hover,
+        #copyTableText:hover {
             background-color: #0ec95c;
         }
 
@@ -138,163 +139,179 @@
         .removeButton:hover:before {
             color: #888;
         }
-
     </style>
 </head>
 <body>
-<div id="calculatorApp">
-    <img src="https://i.ibb.co/Vt6bkmt/354bde43-576b-4df4-96e9-e63357995718.jpg" alt="Logo" class="logo">
-    <h1>Policy Calculator</h1>
+    <div id="calculatorApp">
+        <img src="https://i.ibb.co/Vt6bkmt/354bde43-576b-4df4-96e9-e63357995718.jpg" alt="Logo" class="logo">
+        <h1>Policy Calculator</h1>
 
-    <div class="form-section">
-        <label for="policyNumber">Policy Number:</label>
-        <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number"
-               onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+        <div class="form-section">
+            <label for="policyNumber">Policy Number:</label>
+            <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number"
+                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+        </div>
+
+        <div class="form-section">
+            <label for="paymentDate">Payment Date:</label>
+            <input type="date" id="paymentDate" name="paymentDate"
+                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+        </div>
+
+        <div class="form-section">
+            <label for="policyAmount">Policy Amount (R):</label>
+            <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()"
+                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+        </div>
+
+        <div class="form-section">
+            <label for="months">Months in Arrears:</label>
+            <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()"
+                   onkeydown="if (event.key === 'Enter') addToTableFromInput()">
+        </div>
+
+        <button id="addToTableButton" onclick="addToTableFromInput()">Add to Table</button>
+
+        <div id="totals">
+            <h2>Total Cost: R<span id="totalCost">0</span></h2>
+        </div>
+
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Policy Number</th>
+                    <th>Payment Date</th>
+                    <th>Policy Amount (R)</th>
+                    <th>Months in Arrears</th>
+                    <th>Total Cost (R)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr id="totalsRow">
+                    <td>Total</td>
+                    <td></td>
+                    <td id="totalAmount">0</td>
+                    <td id="totalMonths">0</td>
+                    <td id="grandTotal">0</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <button id="copyTableButton" onclick="copyTable()">Copy Table</button>
+        <button id="copyTableText" onclick="copyTableAsText()">Copy Table as Text</button>
     </div>
 
-    <div class="form-section">
-        <label for="paymentDate">Payment Date:</label>
-        <input type="date" id="paymentDate" name="paymentDate"
-               onkeydown="if (event.key === 'Enter') addToTableFromInput()">
-    </div>
+    <script>
+        function calculateTotal() {
+            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
+            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
+            var totalCost = policyAmount * monthsInArrears;
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+        }
 
-    <div class="form-section">
-        <label for="policyAmount">Policy Amount (R):</label>
-        <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()"
-               onkeydown="if (event.key === 'Enter') addToTableFromInput()">
-    </div>
+        function isDuplicatePolicyNumber(policyNumber) {
+            var tableBody = document.querySelector('#data-table tbody');
+            return Array.from(tableBody.rows).some(row => row.cells[0].textContent === policyNumber);
+        }
 
-    <div class="form-section">
-        <label for="months">Months in Arrears:</label>
-        <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()"
-               onkeydown="if (event.key === 'Enter') addToTableFromInput()">
-    </div>
+        function showWarning(message) {
+            alert(message);
+        }
 
-    <button id="addToTableButton" onclick="addToTableFromInput()">Add to Table</button>
+        function addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost) {
+            var tableBody = document.querySelector('#data-table tbody');
+            var newRow = tableBody.insertRow();
 
-    <div id="totals">
-        <h2>Total Cost: R<span id="totalCost">0</span></h2>
-    </div>
+            newRow.insertCell().textContent = policyNumber;
+            newRow.insertCell().textContent = paymentDate;
+            newRow.insertCell().textContent = policyAmount.toFixed(2);
+            newRow.insertCell().textContent = monthsInArrears;
+            newRow.insertCell().textContent = totalCost.toFixed(2);
 
-    <table id="data-table">
-        <thead>
-        <tr>
-            <th>Policy Number</th>
-            <th>Payment Date</th>
-            <th>Policy Amount (R)</th>
-            <th>Months in Arrears</th>
-            <th>Total Cost (R)</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot>
-        <tr id="totalsRow">
-            <td>Total</td>
-            <td></td>
-            <td id="totalAmount">0</td>
-            <td id="totalMonths">0</td>
-            <td id="grandTotal">0</td>
-            <td></td>
-        </tr>
-        </tfoot>
-    </table>
+            var removeCell = newRow.insertCell();
+            var removeButton = document.createElement('button');
+            removeButton.className = 'removeButton';
+            removeButton.onclick = function () {
+                removeRow(newRow);
+                updateTotals();
+            };
+            removeCell.appendChild(removeButton);
 
-    <button id="copyTableButton" onclick="copyTable()">Copy Table</button>
-</div>
-
-<script>
-    function calculateTotal() {
-        var policyAmount = parseFloat(document.getElementById('policyAmount').value);
-        var monthsInArrears = parseInt(document.getElementById('months').value, 10);
-        var totalCost = policyAmount * monthsInArrears;
-        document.getElementById('totalCost').textContent = totalCost.toFixed(2);
-    }
-
-    function isDuplicatePolicyNumber(policyNumber) {
-        var tableBody = document.querySelector('#data-table tbody');
-        return Array.from(tableBody.rows).some(row => row.cells[0].textContent === policyNumber);
-    }
-
-    function showWarning(message) {
-        alert(message);
-    }
-
-    function addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost) {
-        var tableBody = document.querySelector('#data-table tbody');
-        var newRow = tableBody.insertRow();
-
-        newRow.insertCell().textContent = policyNumber;
-        newRow.insertCell().textContent = paymentDate;
-        newRow.insertCell().textContent = policyAmount.toFixed(2);
-        newRow.insertCell().textContent = monthsInArrears;
-        newRow.insertCell().textContent = totalCost.toFixed(2);
-
-        var removeCell = newRow.insertCell();
-        var removeButton = document.createElement('button');
-        removeButton.className = 'removeButton';
-        removeButton.onclick = function () {
-            removeRow(newRow);
             updateTotals();
-        };
-        removeCell.appendChild(removeButton);
+        }
 
-        updateTotals();
-    }
+        function updateTotals() {
+            var tableBody = document.querySelector('#data-table tbody');
+            var totalsRow = document.getElementById('totalsRow');
 
-    function updateTotals() {
-        var tableBody = document.querySelector('#data-table tbody');
-        var totalsRow = document.getElementById('totalsRow');
+            var totalAmount = 0;
+            var totalMonths = 0;
+            var grandTotal = 0;
 
-        var totalAmount = 0;
-        var totalMonths = 0;
-        var grandTotal = 0;
+            Array.from(tableBody.rows).forEach(row => {
+                var amount = parseFloat(row.cells[2].textContent);
+                var months = parseInt(row.cells[3].textContent, 10);
+                var total = parseFloat(row.cells[4].textContent);
 
-        Array.from(tableBody.rows).forEach(row => {
-            var amount = parseFloat(row.cells[2].textContent);
-            var months = parseInt(row.cells[3].textContent, 10);
-            var total = parseFloat(row.cells[4].textContent);
+                totalAmount += amount;
+                totalMonths += months;
+                grandTotal += total;
+            });
 
-            totalAmount += amount;
-            totalMonths += months;
-            grandTotal += total;
-        });
+            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+            document.getElementById('totalMonths').textContent = totalMonths;
+            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+        }
 
-        document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
-        document.getElementById('totalMonths').textContent = totalMonths;
-        document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
-    }
+        function removeRow(row) {
+            var tableBody = document.querySelector('#data-table tbody');
+            tableBody.removeChild(row);
+        }
 
-    function removeRow(row) {
-        var tableBody = document.querySelector('#data-table tbody');
-        tableBody.removeChild(row);
-    }
+        function copyTable() {
+            var table = document.getElementById('data-table');
+            var range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+        }
 
-    function copyTable() {
-        var table = document.getElementById('data-table');
-        var range = document.createRange();
-        range.selectNode(table);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-        document.execCommand('copy');
-        window.getSelection().removeAllRanges();
-    }
+        function copyTableAsText() {
+            var table = document.getElementById('data-table');
+            var rows = Array.from(table.rows);
+            var headers = Array.from(rows.shift().cells).map(cell => cell.textContent.trim());
+            var text = rows.map(row => Array.from(row.cells).map(cell => cell.textContent.trim()).join('\t')).join('\n');
 
-    function addToTableFromInput() {
-        var policyNumber = document.getElementById('policyNumber').value;
-        var paymentDate = document.getElementById('paymentDate').value;
-        var policyAmount = parseFloat(document.getElementById('policyAmount').value);
-        var monthsInArrears = parseInt(document.getElementById('months').value, 10);
+            var formattedText = headers.join('\t') + '\n' + text;
 
-        if (!isNaN(policyAmount) && !isNaN(monthsInArrears)) {
-            if (!isDuplicatePolicyNumber(policyNumber)) {
-                var totalCost = policyAmount * monthsInArrears;
-                addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost);
-            } else {
-                showWarning('Policy number already exists in the table. Please enter a unique policy number.');
+            var textArea = document.createElement('textarea');
+            textArea.value = formattedText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+
+        function addToTableFromInput() {
+            var policyNumber = document.getElementById('policyNumber').value;
+            var paymentDate = document.getElementById('paymentDate').value;
+            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
+            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
+
+            if (!isNaN(policyAmount) && !isNaN(monthsInArrears)) {
+                if (!isDuplicatePolicyNumber(policyNumber)) {
+                    var totalCost = policyAmount * monthsInArrears;
+                    addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost);
+                } else {
+                    showWarning('Policy number already exists in the table. Please enter a unique policy number.');
+                }
             }
         }
-    }
-</script>
+    </script>
 </body>
 </html>
