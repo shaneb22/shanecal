@@ -285,12 +285,10 @@
             var table = document.getElementById('data-table');
             var rows = Array.from(table.rows);
             var headers = Array.from(rows.shift().cells).map(cell => cell.textContent.trim());
-            var text = rows.map(row => Array.from(row.cells).map(cell => cell.textContent.trim()).join('\t')).join('\n');
-
-            var formattedText = headers.join('\t') + '\n' + text;
+            var text = rows.map(row => headers.map((header, index) => `${header}-${row.cells[index].textContent.trim()}`).join('\n')).join('\n');
 
             var textArea = document.createElement('textarea');
-            textArea.value = formattedText;
+            textArea.value = text;
             document.body.appendChild(textArea);
             textArea.select();
             document.execCommand('copy');
