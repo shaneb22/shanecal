@@ -220,6 +220,47 @@
             font-size: 14px;
             white-space: pre-wrap;
             word-wrap: break-word;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #667eea;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .copy-btn.copied {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .expression-container {
+            position: relative;
+        }
+
+        .expression-container .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10;
+        }
+
+        .output-container {
+            position: relative;
         }
 
         .error {
@@ -270,6 +311,180 @@
             border-radius: 4px;
             font-size: 13px;
             color: #1565c0;
+        }
+
+        .mo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .mo-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .mo-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .mo-avatar:hover::after {
+            content: "Hi! I'm Mo";
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .mo-avatar:hover::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #333;
+            z-index: 1000;
+        }
+
+        .mo-avatar.success {
+            animation: successBounce 0.6s ease;
+        }
+
+        .mo-avatar.error {
+            animation: errorShake 0.5s ease;
+        }
+
+        .mo-message {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            flex: 1;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+
+        .mo-message.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .mo-message::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid white;
+        }
+
+        .mo-message.success {
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+
+        .mo-message.error {
+            border-left: 4px solid #ef4444;
+            color: #991b1b;
+        }
+
+        @keyframes successBounce {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-10deg); }
+            50% { transform: scale(1.1) rotate(10deg); }
+            75% { transform: scale(1.15) rotate(-5deg); }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .panel {
+            animation: slideInUp 0.5s ease;
+        }
+
+        .panel:nth-child(2) {
+            animation-delay: 0.1s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .json-key:hover, .json-string:hover, .json-number:hover, 
+        .json-boolean:hover, .json-null:hover {
+            transition: all 0.2s ease;
+        }
+
+        button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:active::before {
+            width: 300px;
+            height: 300px;
         }
 
         @media (max-width: 968px) {
@@ -329,7 +544,10 @@
                     <option value="$contains(string, 'search')">$contains(string, 'search')</option>
                     <option value="condition ? true : false">condition ? true : false (ternary)</option>
                 </select>
-                <textarea id="jsonataExpression" placeholder="Enter JSONata expression, e.g.: users[age > 25].name"></textarea>
+                <div class="expression-container">
+                    <textarea id="jsonataExpression" placeholder="Enter JSONata expression, e.g.: users[age > 25].name"></textarea>
+                    <button class="copy-btn" onclick="copyExpression()">📋 Copy</button>
+                </div>
                 
                 <div class="button-group">
                     <button class="btn-primary" onclick="evaluateExpression()">Evaluate</button>
@@ -341,7 +559,15 @@
                 </div>
 
                 <div class="panel-title">Result</div>
-                <div id="output" class="output-area">Result will appear here...</div>
+                <div class="output-container">
+                    <div id="output" class="output-area">Result will appear here...</div>
+                    <button class="copy-btn" onclick="copyResult()" style="top: 48px;">📋 Copy</button>
+                </div>
+
+                <div class="mo-container">
+                    <div class="mo-avatar" onclick="toggleMoTip()">🤖</div>
+                    <div id="moMessage" class="mo-message"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -356,9 +582,81 @@
         const jsonataExpression = document.getElementById('jsonataExpression');
         const output = document.getElementById('output');
         const tooltip = document.getElementById('pathTooltip');
+        const moAvatar = document.querySelector('.mo-avatar');
+        const moMessage = document.getElementById('moMessage');
 
-        jsonInput.addEventListener('input', formatJSON);
-        window.addEventListener('load', formatJSON);
+        let moMessageTimeout;
+
+        function showMoMessage(message, type) {
+            clearTimeout(moMessageTimeout);
+            
+            moMessage.textContent = message;
+            moMessage.className = `mo-message show ${type}`;
+            moAvatar.className = `mo-avatar ${type}`;
+            
+            moMessageTimeout = setTimeout(() => {
+                moMessage.classList.remove('show');
+                moAvatar.className = 'mo-avatar';
+            }, 5000);
+        }
+
+        function toggleMoTip() {
+            const tips = [
+                "Click on any JSON element to insert its path into your expression!",
+                "Use the dropdown to select common JSONata patterns!",
+                "Hover over JSON values to see their full path!",
+                "Press Ctrl+Enter to quickly evaluate your expression!",
+                "Try filtering arrays with expressions like: users[age > 25]",
+                "Use the copy buttons to quickly copy expressions or results!",
+                "Combine paths with functions like $count(users) or $sum(prices)"
+            ];
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            showMoMessage(randomTip, 'success');
+        }
+
+        function copyExpression() {
+            const expr = jsonataExpression.value;
+            if (!expr) {
+                showMoMessage("There's no expression to copy yet! 📝", 'error');
+                return;
+            }
+            navigator.clipboard.writeText(expr).then(() => {
+                const btn = event.target;
+                btn.textContent = '✅ Copied!';
+                btn.classList.add('copied');
+                showMoMessage("Expression copied to clipboard! 📋✨", 'success');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function copyResult() {
+            const result = output.textContent;
+            if (!result || result === 'Result will appear here...') {
+                showMoMessage("There's no result to copy yet! Run an expression first! 🚀", 'error');
+                return;
+            }
+            navigator.clipboard.writeText(result).then(() => {
+                const btn = event.target;
+                btn.textContent = '✅ Copied!';
+                btn.classList.add('copied');
+                showMoMessage("Result copied to clipboard! 📋✨", 'success');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Show welcome message from Mo
+        window.addEventListener('load', () => {
+            formatJSON();
+            setTimeout(() => {
+                showMoMessage("Hi! I'm Mo 🤖 Click on me anytime for helpful tips!", 'success');
+            }, 1000);
+        });
 
         function insertTemplate() {
             const select = document.getElementById('expressionTemplates');
@@ -546,6 +844,7 @@
             if (!parsedJSON) {
                 output.className = 'output-area error';
                 output.textContent = 'Please enter valid JSON first';
+                showMoMessage("Oops! I need some JSON data to work with first! 📝", 'error');
                 return;
             }
 
@@ -553,6 +852,7 @@
             if (!expression) {
                 output.className = 'output-area error';
                 output.textContent = 'Please enter a JSONata expression';
+                showMoMessage("Hey! Don't forget to write a JSONata expression! 🤔", 'error');
                 return;
             }
 
@@ -566,12 +866,22 @@
                 output.className = 'output-area';
                 if (result === undefined) {
                     output.textContent = 'undefined (path not found)';
+                    showMoMessage("Hmm, I couldn't find that path. Try hovering over the JSON to see available paths! 🔍", 'error');
                 } else {
                     output.textContent = JSON.stringify(result, null, 2);
+                    const messages = [
+                        "Perfect! Your expression worked beautifully! ✨",
+                        "Success! That's some great JSONata work! 🎉",
+                        "Nailed it! Your query returned results! 🚀",
+                        "Awesome! Got your data right here! 💪",
+                        "Excellent! That expression is on point! 🎯"
+                    ];
+                    showMoMessage(messages[Math.floor(Math.random() * messages.length)], 'success');
                 }
             } catch (e) {
                 output.className = 'output-area error';
                 output.textContent = `Error: ${e.message}`;
+                showMoMessage(`Oops! There's an error: ${e.message}. Let me help you fix it! 🔧`, 'error');
             }
         }
 
