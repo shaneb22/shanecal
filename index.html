@@ -1,337 +1,594 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <title>JSONata Exerciser</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsonata@2.0.5/jsonata.min.js"></script>
     <style>
-        body {
-            font-family: 'proxima-nova', sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            color: #343F57;
-            background-color: #f5f5f5;
-        }
-
-        #calculatorApp {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 85%;
-            max-width: 500px;
-            text-align: left;
-            position: relative;
-            margin-bottom: 20px;
         }
 
-        .logo {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            margin-bottom: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
 
-        h1 {
-            color: #4297ae;
-            margin-bottom: 20px;
-            font-size: 2em;
-            font-weight: 700;
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
             text-align: center;
         }
 
-        .form-section label {
-            color: #343F57;
-            margin-bottom: 5px;
-            font-size: 1.2em;
-            display: block;
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
         }
 
-        input[type="text"],
-        input[type="number"],
-        input[type="date"] {
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            padding: 0 4px;
+        }
+
+        select {
             width: 100%;
-            padding: 12px;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            border: 1px solid #42AE96;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        #jsonInput {
+            min-height: 250px;
+        }
+
+        #jsonataExpression {
+            min-height: 80px;
+            font-weight: 600;
+            color: #764ba2;
+        }
+
+        .json-display {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 300px;
+            max-height: 500px;
+            overflow: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre;
+        }
+
+        .json-key {
+            color: #0066cc;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .json-key:hover {
+            background: #fff3cd;
+            padding: 2px 4px;
+            margin: -2px -4px;
+            border-radius: 3px;
+        }
+
+        .json-string {
+            color: #22863a;
+            cursor: pointer;
+        }
+
+        .json-string:hover {
+            background: #fff3cd;
+            padding: 2px 4px;
+            margin: -2px -4px;
+            border-radius: 3px;
+        }
+
+        .json-number {
+            color: #005cc5;
+            cursor: pointer;
+        }
+
+        .json-number:hover {
+            background: #fff3cd;
+            padding: 2px 4px;
+            margin: -2px -4px;
+            border-radius: 3px;
+        }
+
+        .json-boolean {
+            color: #d73a49;
+            cursor: pointer;
+        }
+
+        .json-boolean:hover {
+            background: #fff3cd;
+            padding: 2px 4px;
+            margin: -2px -4px;
+            border-radius: 3px;
+        }
+
+        .json-null {
+            color: #6f42c1;
+            cursor: pointer;
+        }
+
+        .json-null:hover {
+            background: #fff3cd;
+            padding: 2px 4px;
+            margin: -2px -4px;
+            border-radius: 3px;
+        }
+
+        .json-bracket {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .path-tooltip {
+            position: fixed;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
             border-radius: 6px;
-            font-size: 1.2em;
-            color: #555;
+            font-size: 13px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .output-area {
+            background: #f0f7ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .error {
+            background: #fff5f5;
+            border-color: #fc8181;
+            color: #c53030;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
         }
 
         button {
-            width: 90%;
-            padding: 15px 20px;
+            padding: 10px 20px;
+            border: none;
             border-radius: 6px;
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
-            margin: 20px;
-            text-align: center;
-            transition: background-color 0.3s ease;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+            transition: all 0.3s;
         }
 
-        #addToTableButton,
-        #copyTableButton,
-        #copyTableText,
-        #downloadImage {
-            background-color: #4297ae;
-            border: none;
-            color: #fff;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        #addToTableButton:hover,
-        #copyTableButton:hover,
-        #copyTableText:hover,
-        #downloadImage:hover {
-            background-color: #0ec95c;
-        }
-
-        #totals h2,
-        #totals h3,
-        table th,
-        table td {
-            color: #343F57;
-            font-family: 'proxima-nova', sans-serif;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            overflow: hidden;
-            border-radius: 8px;
-        }
-
-        th, td {
-            padding: 15px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #4297ae;
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            flex: 1;
         }
 
-        .removeButton {
-            position: relative;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 1.2em;
-            background-color: transparent;
-            border: none;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-        .removeButton:before {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 1;
-            color: #FF0000;
-            font-size: 1.5em;
-            content: '×';
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
         }
 
-        .removeButton:hover:before {
-            color: #888;
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #1565c0;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-
 <body>
-    <div id="calculatorApp">
-        <img src="https://i.ibb.co/Vt6bkmt/354bde43-576b-4df4-96e9-e63357995718.jpg" alt="Logo" class="logo">
-        <h1>Policy Calculator</h1>
-
-        <div class="form-section">
-            <label for="policyNumber">Policy Number:</label>
-            <input type="text" id="policyNumber" name="policyNumber" placeholder="Enter policy number">
+    <div class="container">
+        <div class="header">
+            <h1>JSONata Exerciser</h1>
+            <p>Paste JSON, write JSONata expressions, and hover over values to see their path selector</p>
         </div>
 
-        <div class="form-section">
-            <label for="paymentDate">Payment Date:</label>
-            <input type="date" id="paymentDate" name="paymentDate">
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-title">Input JSON</div>
+                <textarea id="jsonInput" placeholder='Paste your JSON here...'>{
+  "data": {
+    "item_name": "Example Item",
+    "item_price": 99.99
+  },
+  "users": [
+    {"name": "Alice", "age": 30},
+    {"name": "Bob", "age": 25}
+  ]
+}</textarea>
+                
+                <div class="panel-title">Formatted JSON (Hover to see path)</div>
+                <div id="jsonDisplay" class="json-display"></div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">JSONata Expression</div>
+                <select id="expressionTemplates" onchange="insertTemplate()">
+                    <option value="">-- Select Expression Template --</option>
+                    <option value="$">$ (root)</option>
+                    <option value="*.property">*.property (all properties)</option>
+                    <option value="array[0]">array[0] (first element)</option>
+                    <option value="array[-1]">array[-1] (last element)</option>
+                    <option value="array[condition]">array[condition] (filter)</option>
+                    <option value="array.property">array.property (map values)</option>
+                    <option value="array{key: value}">array{key: value} (create object)</option>
+                    <option value="$count(array)">$count(array) (count elements)</option>
+                    <option value="$sum(array)">$sum(array) (sum numbers)</option>
+                    <option value="$average(array)">$average(array) (average)</option>
+                    <option value="$max(array)">$max(array) (maximum)</option>
+                    <option value="$min(array)">$min(array) (minimum)</option>
+                    <option value="$sort(array)">$sort(array) (sort ascending)</option>
+                    <option value="$distinct(array)">$distinct(array) (unique values)</option>
+                    <option value="$join(array, ', ')">$join(array, ', ') (join strings)</option>
+                    <option value="$uppercase(string)">$uppercase(string) (to uppercase)</option>
+                    <option value="$lowercase(string)">$lowercase(string) (to lowercase)</option>
+                    <option value="$substring(string, start, length)">$substring(string, start, length)</option>
+                    <option value="$contains(string, 'search')">$contains(string, 'search')</option>
+                    <option value="condition ? true : false">condition ? true : false (ternary)</option>
+                </select>
+                <textarea id="jsonataExpression" placeholder="Enter JSONata expression, e.g.: users[age > 25].name"></textarea>
+                
+                <div class="button-group">
+                    <button class="btn-primary" onclick="evaluateExpression()">Evaluate</button>
+                    <button class="btn-secondary" onclick="clearAll()">Clear All</button>
+                </div>
+
+                <div class="info-box">
+                    💡 Tip: Hover over any key or value in the formatted JSON to see its JSONata path selector. Click to insert it into the expression field.
+                </div>
+
+                <div class="panel-title">Result</div>
+                <div id="output" class="output-area">Result will appear here...</div>
+            </div>
         </div>
-
-        <div class="form-section">
-            <label for="policyAmount">Policy Amount (R):</label>
-            <input type="number" id="policyAmount" name="policyAmount" min="0" value="0" oninput="calculateTotal()">
-        </div>
-
-        <div class="form-section">
-            <label for="months">Months in Arrears:</label>
-            <input type="number" id="months" name="months" min="1" value="1" oninput="calculateTotal()">
-        </div>
-
-        <button id="addToTableButton" onclick="addToTableFromInput()">Add to Table</button>
-
-        <div id="totals">
-            <h2>Total Cost: R<span id="totalCost">0</span></h2>
-        </div>
-
-        <table id="data-table">
-            <thead>
-                <tr>
-                    <th>Policy Number</th>
-                    <th>Payment Date</th>
-                    <th>Policy Amount (R)</th>
-                    <th>Months in Arrears</th>
-                    <th>Total Cost (R)</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot>
-                <tr id="totalsRow">
-                    <td>Total</td>
-                    <td></td>
-                    <td id="totalAmount">0</td>
-                    <td id="totalMonths">0</td>
-                    <td id="grandTotal">0</td>
-                    <td></td>
-                </tr>
-            </tfoot>
-        </table>
-
-        <button id="copyTableButton" onclick="copyTable()">Copy Table</button>
-        <button id="copyTableText" onclick="copyTableAsText()">Copy as Text</button>
-        <button id="downloadImage" onclick="downloadTableAsImage()">Download as Image</button>
     </div>
 
+    <div id="pathTooltip" class="path-tooltip"></div>
+
     <script>
-        function calculateTotal() {
-            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
-            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
-            var totalCost = policyAmount * monthsInArrears;
-            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
-        }
+        let parsedJSON = null;
 
-        function isDuplicatePolicyNumber(policyNumber) {
-            var tableBody = document.querySelector('#data-table tbody');
-            return Array.from(tableBody.rows).some(row => row.cells[0].textContent === policyNumber);
-        }
+        const jsonInput = document.getElementById('jsonInput');
+        const jsonDisplay = document.getElementById('jsonDisplay');
+        const jsonataExpression = document.getElementById('jsonataExpression');
+        const output = document.getElementById('output');
+        const tooltip = document.getElementById('pathTooltip');
 
-        function showWarning(message) {
-            alert(message);
-        }
+        jsonInput.addEventListener('input', formatJSON);
+        window.addEventListener('load', formatJSON);
 
-        function addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost) {
-            var tableBody = document.querySelector('#data-table tbody');
-            var newRow = tableBody.insertRow();
-
-            newRow.insertCell().textContent = policyNumber;
-            newRow.insertCell().textContent = paymentDate;
-            newRow.insertCell().textContent = policyAmount.toFixed(2);
-            newRow.insertCell().textContent = monthsInArrears;
-            newRow.insertCell().textContent = totalCost.toFixed(2);
-
-            var removeCell = newRow.insertCell();
-            var removeButton = document.createElement('button');
-            removeButton.className = 'removeButton';
-            removeButton.onclick = function () {
-                removeRow(newRow);
-                updateTotals();
-            };
-            removeCell.appendChild(removeButton);
-
-            updateTotals();
-        }
-
-        function updateTotals() {
-            var tableBody = document.querySelector('#data-table tbody');
-            var totalsRow = document.getElementById('totalsRow');
-
-            var totalAmount = 0;
-            var totalMonths = 0;
-            var grandTotal = 0;
-
-            Array.from(tableBody.rows).forEach(row => {
-                var amount = parseFloat(row.cells[2].textContent);
-                var months = parseInt(row.cells[3].textContent, 10);
-                var total = parseFloat(row.cells[4].textContent);
-
-                totalAmount += amount;
-                totalMonths += months;
-                grandTotal += total;
-            });
-
-            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
-            document.getElementById('totalMonths').textContent = totalMonths;
-            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
-        }
-
-        function removeRow(row) {
-            var tableBody = document.querySelector('#data-table tbody');
-            tableBody.removeChild(row);
-        }
-
-        function copyTable() {
-            var table = document.getElementById('data-table');
-            var range = document.createRange();
-            range.selectNode(table);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            document.execCommand('copy');
-            window.getSelection().removeAllRanges();
-        }
-
-        function copyTableAsText() {
-            var table = document.getElementById('data-table');
-            var rows = Array.from(table.rows);
-            var headers = Array.from(rows.shift().cells).map(cell => cell.textContent.trim());
-            var text = rows.map(row => headers.map((header, index) => `${header}-${row.cells[index].textContent.trim()}`).join('\n')).join('\n');
-
-            var textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-        }
-
-        function downloadTableAsImage() {
-            var table = document.getElementById('data-table');
-            html2canvas(table).then(function (canvas) {
-                var link = document.createElement('a');
-                link.href = canvas.toDataURL();
-                link.download = 'table_image.png';
-                link.click();
-            });
-        }
-
-        function addToTableFromInput() {
-            var policyNumber = document.getElementById('policyNumber').value;
-            var paymentDate = document.getElementById('paymentDate').value;
-            var policyAmount = parseFloat(document.getElementById('policyAmount').value);
-            var monthsInArrears = parseInt(document.getElementById('months').value, 10);
-
-            if (!isNaN(policyAmount) && !isNaN(monthsInArrears)) {
-                if (!isDuplicatePolicyNumber(policyNumber)) {
-                    var totalCost = policyAmount * monthsInArrears;
-                    addToTable(policyNumber, paymentDate, policyAmount, monthsInArrears, totalCost);
-                } else {
-                    showWarning('Policy number already exists in the table. Please enter a unique policy number.');
-                }
+        function insertTemplate() {
+            const select = document.getElementById('expressionTemplates');
+            const template = select.value;
+            if (template) {
+                jsonataExpression.value = template;
+                jsonataExpression.focus();
+                // Don't reset the dropdown so user knows which template they selected
             }
         }
+
+        function formatJSON() {
+            try {
+                const text = jsonInput.value.trim();
+                if (!text) {
+                    jsonDisplay.innerHTML = '<span style="color: #999;">Formatted JSON will appear here...</span>';
+                    parsedJSON = null;
+                    return;
+                }
+                
+                parsedJSON = JSON.parse(text);
+                jsonDisplay.innerHTML = '';
+                renderJSON(parsedJSON, [], jsonDisplay);
+            } catch (e) {
+                jsonDisplay.innerHTML = `<span style="color: #c53030;">Invalid JSON: ${e.message}</span>`;
+                parsedJSON = null;
+            }
+        }
+
+        function buildPath(segments) {
+            if (segments.length === 0) return '$';
+            
+            let path = '';
+            segments.forEach((segment, index) => {
+                if (typeof segment === 'number') {
+                    path += `[${segment}]`;
+                } else {
+                    const needsQuotes = /[^a-zA-Z0-9_]/.test(segment) || /^\d/.test(segment);
+                    if (index === 0) {
+                        path += needsQuotes ? `\`${segment}\`` : segment;
+                    } else {
+                        path += needsQuotes ? `.\`${segment}\`` : `.${segment}`;
+                    }
+                }
+            });
+            
+            return path;
+        }
+
+        function renderJSON(obj, pathSegments, container) {
+            const fullPath = buildPath(pathSegments);
+            
+            if (obj === null) {
+                const span = document.createElement('span');
+                span.className = 'json-null';
+                span.textContent = 'null';
+                span.setAttribute('data-path', fullPath);
+                container.appendChild(span);
+                return;
+            }
+
+            if (typeof obj === 'boolean') {
+                const span = document.createElement('span');
+                span.className = 'json-boolean';
+                span.textContent = obj;
+                span.setAttribute('data-path', fullPath);
+                container.appendChild(span);
+                return;
+            }
+
+            if (typeof obj === 'number') {
+                const span = document.createElement('span');
+                span.className = 'json-number';
+                span.textContent = obj;
+                span.setAttribute('data-path', fullPath);
+                container.appendChild(span);
+                return;
+            }
+
+            if (typeof obj === 'string') {
+                const span = document.createElement('span');
+                span.className = 'json-string';
+                span.textContent = `"${obj}"`;
+                span.setAttribute('data-path', fullPath);
+                container.appendChild(span);
+                return;
+            }
+
+            if (Array.isArray(obj)) {
+                if (obj.length === 0) {
+                    container.appendChild(document.createTextNode('[]'));
+                    return;
+                }
+                
+                container.appendChild(document.createTextNode('[\n'));
+                obj.forEach((item, index) => {
+                    container.appendChild(document.createTextNode('  '));
+                    const itemSegments = [...pathSegments, index];
+                    renderJSON(item, itemSegments, container);
+                    if (index < obj.length - 1) {
+                        container.appendChild(document.createTextNode(','));
+                    }
+                    container.appendChild(document.createTextNode('\n'));
+                });
+                container.appendChild(document.createTextNode(']'));
+                return;
+            }
+
+            if (typeof obj === 'object') {
+                const keys = Object.keys(obj);
+                if (keys.length === 0) {
+                    container.appendChild(document.createTextNode('{}'));
+                    return;
+                }
+
+                container.appendChild(document.createTextNode('{\n'));
+                keys.forEach((key, index) => {
+                    const keySegments = [...pathSegments, key];
+                    const keyPath = buildPath(keySegments);
+                    
+                    container.appendChild(document.createTextNode('  '));
+                    
+                    const keySpan = document.createElement('span');
+                    keySpan.className = 'json-key';
+                    keySpan.textContent = key;
+                    keySpan.setAttribute('data-path', keyPath);
+                    container.appendChild(keySpan);
+                    
+                    container.appendChild(document.createTextNode(': '));
+                    renderJSON(obj[key], keySegments, container);
+                    
+                    if (index < keys.length - 1) {
+                        container.appendChild(document.createTextNode(','));
+                    }
+                    container.appendChild(document.createTextNode('\n'));
+                });
+                container.appendChild(document.createTextNode('}'));
+                return;
+            }
+        }
+
+        jsonDisplay.addEventListener('mouseover', (e) => {
+            if (e.target.hasAttribute('data-path')) {
+                const path = e.target.getAttribute('data-path');
+                tooltip.textContent = path;
+                tooltip.style.display = 'block';
+            }
+        });
+
+        jsonDisplay.addEventListener('mousemove', (e) => {
+            if (tooltip.style.display === 'block') {
+                tooltip.style.left = (e.clientX + 10) + 'px';
+                tooltip.style.top = (e.clientY - 30) + 'px';
+            }
+        });
+
+        jsonDisplay.addEventListener('mouseout', (e) => {
+            if (!e.relatedTarget || !e.relatedTarget.hasAttribute('data-path')) {
+                tooltip.style.display = 'none';
+            }
+        });
+
+        jsonDisplay.addEventListener('click', (e) => {
+            if (e.target.hasAttribute('data-path')) {
+                const path = e.target.getAttribute('data-path');
+                const textarea = jsonataExpression;
+                
+                // Get cursor position
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const currentValue = textarea.value;
+                
+                // Insert path at cursor position (or replace selection)
+                const newValue = currentValue.substring(0, start) + path + currentValue.substring(end);
+                textarea.value = newValue;
+                
+                // Set cursor position after inserted text
+                const newCursorPos = start + path.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                textarea.focus();
+            }
+        });
+
+        async function evaluateExpression() {
+            if (!parsedJSON) {
+                output.className = 'output-area error';
+                output.textContent = 'Please enter valid JSON first';
+                return;
+            }
+
+            const expression = jsonataExpression.value.trim();
+            if (!expression) {
+                output.className = 'output-area error';
+                output.textContent = 'Please enter a JSONata expression';
+                return;
+            }
+
+            try {
+                output.className = 'output-area';
+                output.textContent = 'Evaluating...';
+                
+                const compiled = jsonata(expression);
+                const result = await compiled.evaluate(parsedJSON);
+                
+                output.className = 'output-area';
+                if (result === undefined) {
+                    output.textContent = 'undefined (path not found)';
+                } else {
+                    output.textContent = JSON.stringify(result, null, 2);
+                }
+            } catch (e) {
+                output.className = 'output-area error';
+                output.textContent = `Error: ${e.message}`;
+            }
+        }
+
+        function clearAll() {
+            jsonInput.value = '';
+            jsonataExpression.value = '';
+            output.className = 'output-area';
+            output.textContent = 'Result will appear here...';
+            jsonDisplay.innerHTML = '<span style="color: #999;">Formatted JSON will appear here...</span>';
+            parsedJSON = null;
+        }
+
+        jsonataExpression.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                evaluateExpression();
+            }
+        });
     </script>
 </body>
-
 </html>
