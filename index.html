@@ -664,20 +664,27 @@
         jsonInput.addEventListener('input', formatJSON);
 
         function showMoMessage(message, type) {
-            clearTimeout(moMessageTimeout);
-            
-            const moMessage = document.getElementById('moMessage');
-            const moAvatar = document.querySelector('.mo-avatar');
-            
-            if (moMessage && moAvatar) {
-                moMessage.textContent = message;
-                moMessage.className = `mo-message show ${type}`;
-                moAvatar.className = `mo-avatar ${type}`;
+            // Silently fail if Mo isn't ready - don't throw errors
+            try {
+                clearTimeout(moMessageTimeout);
                 
-                moMessageTimeout = setTimeout(() => {
-                    moMessage.classList.remove('show');
-                    moAvatar.className = 'mo-avatar';
-                }, 5000);
+                const moMessage = document.getElementById('moMessage');
+                const moAvatar = document.querySelector('.mo-avatar');
+                
+                if (moMessage && moAvatar) {
+                    moMessage.textContent = message;
+                    moMessage.className = `mo-message show ${type}`;
+                    moAvatar.className = `mo-avatar ${type}`;
+                    
+                    moMessageTimeout = setTimeout(() => {
+                        if (moMessage && moAvatar) {
+                            moMessage.classList.remove('show');
+                            moAvatar.className = 'mo-avatar';
+                        }
+                    }, 5000);
+                }
+            } catch (error) {
+                // Silently ignore - Mo messages are non-critical
             }
         }
 
@@ -960,22 +967,27 @@
         });
 
         async function evaluateExpression() {
-            if (!parsedJSON) {
-                output.className = 'output-area error';
-                output.textContent = 'Please enter valid JSON first';
-                showMoMessage("Oops! I need some JSON data to work with first! 📝", 'error');
-                return;
-            }
-
-            const expression = jsonataExpression.value.trim();
-            if (!expression) {
-                output.className = 'output-area error';
-                output.textContent = 'Please enter a JSONata expression';
-                showMoMessage("Hey! Don't forget to write a JSONata expression! 🤔", 'error');
-                return;
-            }
-
             try {
+                if (!parsedJSON) {
+                    output.className = 'output-area error';
+                    output.textContent = 'Please enter valid JSON first';
+                    return;
+                }
+
+                const expression = jsonataExpression.value.trim();
+                if (!expression) {
+                    output.className = 'output-area error';
+                    output.textContent = 'Please enter a JSONata expression';
+                    return;
+                }
+
+                // Check if jsonata is loaded
+                if (typeof jsonata === 'undefined') {
+                    output.className = 'output-area error';
+                    output.textContent = 'Error: JSONata library is not loaded. Please refresh the page.';
+                    return;
+                }
+
                 output.className = 'output-area';
                 output.textContent = 'Evaluating...';
                 
@@ -985,22 +997,30 @@
                 output.className = 'output-area';
                 if (result === undefined) {
                     output.textContent = 'undefined (path not found)';
-                    showMoMessage("Hmm, I couldn't find that path. Try hovering over the JSON to see available paths! 🔍", 'error');
                 } else {
                     output.textContent = JSON.stringify(result, null, 2);
-                    const messages = [
-                        "Perfect! Your expression worked beautifully! ✨",
-                        "Success! That's some great JSONata work! 🎉",
-                        "Nailed it! Your query returned results! 🚀",
-                        "Awesome! Got your data right here! 💪",
-                        "Excellent! That expression is on point! 🎯"
-                    ];
-                    showMoMessage(messages[Math.floor(Math.random() * messages.length)], 'success');
                 }
+                
+                // Try to show Mo message but don't let it break evaluation
+                setTimeout(() => {
+                    try {
+                        showMoMessage("Perfect! Your expression worked! ✨", 'success');
+                    } catch (e) {
+                        // Ignore Mo errors
+                    }
+                }, 100);
             } catch (e) {
                 output.className = 'output-area error';
                 output.textContent = `Error: ${e.message}`;
-                showMoMessage(`Oops! There's an error: ${e.message}`, 'error');
+                
+                // Try to show Mo message but don't let it break evaluation
+                setTimeout(() => {
+                    try {
+                        showMoMessage("Oops! Check your expression syntax!", 'error');
+                    } catch (err) {
+                        // Ignore Mo errors
+                    }
+                }, 100);
             }
         }
 
