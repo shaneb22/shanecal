@@ -304,6 +304,74 @@
             background: #d0d0d0;
         }
 
+        .btn-danger {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            text-align: center;
+            animation: slideInUp 0.3s ease;
+        }
+
+        .modal h2 {
+            margin-bottom: 16px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .modal p {
+            margin-bottom: 24px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -551,7 +619,6 @@
                 
                 <div class="button-group">
                     <button class="btn-primary" onclick="evaluateExpression()">Evaluate</button>
-                    <button class="btn-secondary" onclick="clearAll()">Clear All</button>
                 </div>
 
                 <div class="info-box">
@@ -576,16 +643,66 @@
 
     <script>
         let parsedJSON = null;
+        let moMessageTimeout;
 
+        // Get all elements
         const jsonInput = document.getElementById('jsonInput');
         const jsonDisplay = document.getElementById('jsonDisplay');
         const jsonataExpression = document.getElementById('jsonataExpression');
         const output = document.getElementById('output');
         const tooltip = document.getElementById('pathTooltip');
-        const moAvatar = document.querySelector('.mo-avatar');
-        const moMessage = document.getElementById('moMessage');
 
-        let moMessageTimeout;
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            formatJSON();
+            setTimeout(() => {
+                showMoMessage("Hi! I'm Mo 🤖 Click on me anytime for helpful tips!", 'success');
+            }, 1000);
+        });
+
+        // Listen for JSON input changes
+        jsonInput.addEventListener('input', formatJSON);
+
+        function showMoMessage(message, type) {
+            clearTimeout(moMessageTimeout);
+            
+            const moMessage = document.getElementById('moMessage');
+            const moAvatar = document.querySelector('.mo-avatar');
+            
+            if (moMessage && moAvatar) {
+                moMessage.textContent = message;
+                moMessage.className = `mo-message show ${type}`;
+                moAvatar.className = `mo-avatar ${type}`;
+                
+                moMessageTimeout = setTimeout(() => {
+                    moMessage.classList.remove('show');
+                    moAvatar.className = 'mo-avatar';
+                }, 5000);
+            }
+        }
+
+        function toggleMoTip() {
+            const tips = [
+                "Click on any JSON element to insert its path into your expression!",
+                "Use the dropdown to select common JSONata patterns!",
+                "Hover over JSON values to see their full path!",
+                "Press Ctrl+Enter to quickly evaluate your expression!",
+                "Try filtering arrays with expressions like: users[age > 25]",
+                "Use the copy buttons to quickly copy expressions or results!",
+                "Combine paths with functions like $count(users) or $sum(prices)"
+            ];
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            showMoMessage(randomTip, 'success');
+        }
+
+        function insertTemplate() {
+            const select = document.getElementById('expressionTemplates');
+            const template = select.value;
+            if (template) {
+                jsonataExpression.value = template;
+                jsonataExpression.focus();
+            }
+        }
 
         function showMoMessage(message, type) {
             clearTimeout(moMessageTimeout);
@@ -622,11 +739,12 @@
             }
             navigator.clipboard.writeText(expr).then(() => {
                 const btn = event.target;
+                const originalText = btn.textContent;
                 btn.textContent = '✅ Copied!';
                 btn.classList.add('copied');
                 showMoMessage("Expression copied to clipboard! 📋✨", 'success');
                 setTimeout(() => {
-                    btn.textContent = '📋 Copy';
+                    btn.textContent = originalText;
                     btn.classList.remove('copied');
                 }, 2000);
             });
@@ -640,11 +758,12 @@
             }
             navigator.clipboard.writeText(result).then(() => {
                 const btn = event.target;
+                const originalText = btn.textContent;
                 btn.textContent = '✅ Copied!';
                 btn.classList.add('copied');
                 showMoMessage("Result copied to clipboard! 📋✨", 'success');
                 setTimeout(() => {
-                    btn.textContent = '📋 Copy';
+                    btn.textContent = originalText;
                     btn.classList.remove('copied');
                 }, 2000);
             });
@@ -881,7 +1000,7 @@
             } catch (e) {
                 output.className = 'output-area error';
                 output.textContent = `Error: ${e.message}`;
-                showMoMessage(`Oops! There's an error: ${e.message}. Let me help you fix it! 🔧`, 'error');
+                showMoMessage(`Oops! There's an error: ${e.message}`, 'error');
             }
         }
 
@@ -892,6 +1011,8 @@
             output.textContent = 'Result will appear here...';
             jsonDisplay.innerHTML = '<span style="color: #999;">Formatted JSON will appear here...</span>';
             parsedJSON = null;
+            closeModal();
+            showMoMessage("All cleared! Let's start fresh! 🎉", 'success');
         }
 
         jsonataExpression.addEventListener('keydown', (e) => {
