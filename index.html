@@ -1,61 +1,28 @@
+<%@ Page Language="C#" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SharePoint ASPX iframe Test</title>
+    <title>Chat</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f5f7;
+        /* This ensures the chat widget takes up the full iframe window size properly */
+        html, body {
             margin: 0;
-            padding: 40px;
-        }
-        .test-container {
-            max-width: 600px;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            font-size: 24px;
-            margin-top: 0;
-        }
-        p {
-            color: #666;
-            line-height: 1.5;
-        }
-        .status-box {
-            background-color: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 10px 15px;
-            margin: 20px 0;
-            font-size: 14px;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
         }
     </style>
 </head>
 <body>
 
-    <div class="test-container">
-        <h1>SharePoint Widget Integration Test</h1>
-        <p>If your SharePoint authentication and HTML Field Security settings are correct, the chat widget should appear pinned to the bottom-right corner of this page.</p>
-        
-        <div class="status-box">
-            <strong>Testing URL:</strong><br>
-            <code>https://sibanyestillwater.sharepoint.com/sites/ConnexAI/SiteAssets/ChatWidgetv2.aspx?env=Embedded</code>
-        </div>
-        <p><em>Note: Make sure you are signed into your Sibanye-Stillwater SharePoint account in another tab of this browser, or the iframe may show a sign-in block.</em></p>
-    </div>
-
-    <iframe src="https://sibanyestillwater.sharepoint.com/sites/ConnexAI/SiteAssets/ChatWidgetv2.aspx?env=Embedded" 
-            width="400" 
-            height="800" 
-            frameborder="0" 
-            scrolling="no" 
-            style="position: fixed; bottom: 10px; right: 10px; z-index: 9999; border: none;">
-    </iframe>
+    <!-- Your ConnexOne Live Chat Engine Script -->
+    <script src="https://livechat-sibanye-stillwater-pa.connexone.co.uk/widget?connid=afb7e249-0d8e-4b4e-95c7-a4558c704259" 
+            id="livechat-sibanye-stillwater-pa" 
+            data-socket-uri="https://livechat-sibanye-stillwater-pa.connexone.co.uk">
+    </script>
 
 </body>
 </html>
